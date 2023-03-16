@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Intervals {
-    private static final List<String> NOTE_LIST = new ArrayList<>(List.of("C", "D", "E", "F", "G", "A", "B"));
+    private static final List<String> NOTE_LIST = List.of("C", "D", "E", "F", "G", "A", "B");
     private static final List<String> ACCEPTABLE_INPUT_NOTES_LIST;
     private static final List<String> ACCEPTABLE_NOTES_LIST;
     private static final Map<String, Map<String, Integer>> INTERVAL_LIST;
@@ -20,8 +20,8 @@ public class Intervals {
     private static final String DESCENDING_VALUE = "dsc";
     private static final String SEMITONE = "semitone";
     private static final String DEGREES = "degrees";
-    private static final List<String> SINGLE_SEMITONE_LIST = new ArrayList<>(List.of("E", "B"));
-    private static final List<String> SINGLE_SEMITONE_REVERSE_LIST = new ArrayList<>(List.of("F", "C"));
+    private static final List<String> SINGLE_SEMITONE_LIST = List.of("E", "B");
+    private static final List<String> SINGLE_SEMITONE_REVERSE_LIST = List.of("F", "C");
     private static final int FIRST_ARGUMENT = 0;
     private static final int NOTE_ARGUMENT_INDEX = 1;
     private static final int ORDER_ARGUMENT_INDEX = 2;
@@ -74,16 +74,16 @@ public class Intervals {
                 "##", -2
         );
     }
+
     public static String intervalConstruction(String[] args) {
         validateIntervalConstruction(args);
 
         String startNoteName = args[NOTE_ARGUMENT_INDEX].substring(0, 1);
         int degree = INTERVAL_LIST.get(args[FIRST_ARGUMENT]).get(DEGREES);
-        String endNoteName;
 
         List<String> currentNoteList = new ArrayList<>(NOTE_LIST);
-        Map<String, Integer> currentInputAccidental = new HashMap<>(INPUT_ACCIDENTALS);
-        Map<Integer, String> currentOutputAccidental = new HashMap<>(OUTPUT_ACCIDENTALS);
+        Map<String, Integer> currentInputAccidental = INPUT_ACCIDENTALS;
+        Map<Integer, String> currentOutputAccidental = OUTPUT_ACCIDENTALS;
         List<String> singleSemitoneList = new ArrayList<>(SINGLE_SEMITONE_LIST);
 
         if (args.length == 3 && args[ORDER_ARGUMENT_INDEX].equalsIgnoreCase(DESCENDING_VALUE)) {
@@ -93,12 +93,13 @@ public class Intervals {
             singleSemitoneList = SINGLE_SEMITONE_REVERSE_LIST;
         }
 
-        endNoteName = calculateNoteName(startNoteName, degree, currentNoteList);
+        String endNoteName = calculateNoteName(startNoteName, degree, currentNoteList);
         endNoteName += currentOutputAccidental.get(calculateAccidentalName(args, startNoteName, degree, currentNoteList,
                 currentInputAccidental, singleSemitoneList));
 
         return endNoteName;
     }
+
     public static String intervalIdentification(String[] args) {
         validateIntervalIdentification(args);
 
@@ -106,10 +107,9 @@ public class Intervals {
         String secondNoteName = args[NOTE_ARGUMENT_INDEX].substring(0, 1);
         int degreeBetweenNotes;
         int semitoneNumber;
-        String interval = "";
 
         List<String> currentNoteList = new ArrayList<>(NOTE_LIST);
-        Map<String, Integer> currentInputAccidentalList = new HashMap<>(INPUT_ACCIDENTALS);
+        Map<String, Integer> currentInputAccidentalList = INPUT_ACCIDENTALS;
         List<String> singleSemitoneList = new ArrayList<>(SINGLE_SEMITONE_LIST);
 
         if (args.length == 3 && args[ORDER_ARGUMENT_INDEX].equalsIgnoreCase(DESCENDING_VALUE)) {
@@ -122,12 +122,11 @@ public class Intervals {
         semitoneNumber = calculateSemitonesNumber(args, firstNoteName, degreeBetweenNotes, currentNoteList,
                 currentInputAccidentalList, singleSemitoneList);
 
-        Map<String, Integer> intervalValue = Map.of(SEMITONE, semitoneNumber, DEGREES, degreeBetweenNotes);
+        Map<String, Integer> intervalDescription = Map.of(SEMITONE, semitoneNumber, DEGREES, degreeBetweenNotes);
 
-        interval = getIntervalName(intervalValue);
-
-        return interval;
+        return getIntervalName(intervalDescription);
     }
+
     private static void validateIntervalConstruction(String[] args) {
         if (args.length < 2 || args.length > 3) {
             throw new IllegalArgumentException("Illegal number of elements in input array");
@@ -139,6 +138,7 @@ public class Intervals {
             throw new IllegalArgumentException("Illegal argument");
         }
     }
+
     private static void validateIntervalIdentification(String[] args) {
         if (args.length < 2 || args.length > 3) {
             throw new IllegalArgumentException("Cannot identify the interval");
@@ -150,20 +150,23 @@ public class Intervals {
             throw new IllegalArgumentException("Illegal argument");
         }
     }
+
     private static boolean isIntervalOrderNotValid(String[] args) {
         return args.length == 3
                 && !ASCENDING_VALUE.equalsIgnoreCase(args[ORDER_ARGUMENT_INDEX])
                 && !DESCENDING_VALUE.equalsIgnoreCase(args[ORDER_ARGUMENT_INDEX]);
     }
+
     private static String calculateNoteName(String startNoteName, int degree, List<String> currentNoteList) {
         int startNotePosition = currentNoteList.indexOf(startNoteName);
         int endNotePosition = calculateNoteIndex(degree, startNotePosition, currentNoteList.size());
-        String noteName = currentNoteList.get(endNotePosition);
-        return noteName;
+        return currentNoteList.get(endNotePosition);
     }
+
     public static int calculateNoteIndex(int degree, int start, int size) {
         return (start + degree) % size - 1;
     }
+
     private static int calculateAccidentalName(String[] args, String startNoteName, int degree,
                                                List<String> currentNoteList, Map<String, Integer> currentInputAccidental,
                                                List<String> singleSemitoneList) {
@@ -189,6 +192,7 @@ public class Intervals {
 
         return possibleSemitone - semitonesNumber;
     }
+
     private static int calculateSemitonesNumber(String[] args, String firstNoteName, int degreeBetweenNotes,
                                                 List<String> currentNoteList, Map<String, Integer> currentInputAccidentalList,
                                                 List<String> singleSemitoneList) {
@@ -214,22 +218,21 @@ public class Intervals {
 
         return semitoneNumber;
     }
+
     private static int calculateDegreeBetweenNotes(String firstNoteName, String secondNoteName, List<String> currentNoteList) {
         int firstNotePosition = currentNoteList.indexOf(firstNoteName);
         int secondNotePosition = currentNoteList.indexOf(secondNoteName);
 
-        int degreeBetweenNotes = secondNotePosition < firstNotePosition
+        return secondNotePosition < firstNotePosition
                 ? (currentNoteList.size() - firstNotePosition + secondNotePosition + 1)
                 : (secondNotePosition - firstNotePosition + 1);
-
-        return degreeBetweenNotes;
     }
+
     private static String getIntervalName(Map<String, Integer> intervalDescription) {
-        for (Map.Entry<String, Map<String, Integer>> entry : INTERVAL_LIST.entrySet()) {
-            if (entry.getValue().equals(intervalDescription)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return INTERVAL_LIST.entrySet().stream()
+                .filter(entry -> intervalDescription.equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -23,9 +23,12 @@ public class IntervalConstructionTest {
                 new String[]{"M2", "E#", "dsc"},
                 new String[]{"P4", "E", "dsc"},
                 new String[]{"m2", "D#"},
-                new String[]{"M7", "G", "asc"}
+                new String[]{"M7", "G", "asc"},
+                new String[]{"M2", "C", "asc"},
+                new String[]{"P5", "B", "asc"},
+                new String[]{"m2", "Fb", "asc"}
         );
-        exprectedResultList = List.of("D", "F#", "A", "Abb", "D#", "G#", "Gbb", "D#", "B", "E", "F#");
+        exprectedResultList = List.of("D", "F#", "A", "Abb", "D#", "G#", "Gbb", "D#", "B", "E", "F#", "D", "F#", "Gbb");
     }
 
     @Test
