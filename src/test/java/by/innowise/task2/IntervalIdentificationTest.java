@@ -1,39 +1,32 @@
 package by.innowise.task2;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 public class IntervalIdentificationTest {
-    List<String[]> taskList;
-    List<String> exprectedResultList;
 
-    @BeforeEach
-    void setUp() {
-        taskList = List.of(
-                new String[]{"C", "D"},
-                new String[]{"B", "F#", "asc"},
-                new String[]{"Fb", "Gbb"},
-                new String[]{"G", "F#", "asc"},
-                new String[]{"Bb", "A", "dsc"},
-                new String[]{"Cb", "Abb", "dsc"},
-                new String[]{"G#", "D#", "dsc"},
-                new String[]{"E", "B", "dsc"},
-                new String[]{"E#", "D#", "dsc"},
-                new String[]{"B", "G#", "dsc"}
-        );
-        exprectedResultList = List.of("M2", "P5", "m2", "M7", "m2", "M3", "P4", "P4", "M2", "m3");
+    @ParameterizedTest
+    @MethodSource("generateData")
+    void testIntervalIdentification(String expected, String[] task) {
+        Assertions.assertEquals(expected, Intervals.intervalIdentification(task));
     }
 
-    @Test
-    void testIntervalIdentification() {
-        for (int i = 0; i < taskList.size(); i++) {
-            String actualInterval = Intervals.intervalIdentification(taskList.get(i));
-            String expectedInterval = exprectedResultList.get(i);
-
-            Assertions.assertEquals(expectedInterval, actualInterval);
-        }
+    static Stream<Arguments> generateData() {
+        return Stream.of(
+                Arguments.of("M2", new String[]{"C", "D"}),
+                Arguments.of("P5", new String[]{"B", "F#", "asc"}),
+                Arguments.of("m2", new String[]{"Fb", "Gbb"}),
+                Arguments.of("M7", new String[]{"G", "F#", "asc"}),
+                Arguments.of("m2", new String[]{"Bb", "A", "dsc"}),
+                Arguments.of("M3", new String[]{"Cb", "Abb", "dsc"}),
+                Arguments.of("P4", new String[]{"G#", "D#", "dsc"}),
+                Arguments.of("P4", new String[]{"E", "B", "dsc"}),
+                Arguments.of("M2", new String[]{"E#", "D#", "dsc"}),
+                Arguments.of("m3", new String[]{"B", "G#", "dsc"})
+        );
     }
 }
